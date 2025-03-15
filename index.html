@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Task & Puzzle Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body class="bg-gray-100 font-[Poppins]">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap gap-4 mb-8">
+            <button onclick="showSection('todo')" class="tab-btn bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">To-Do List</button>
+            <button onclick="showSection('mscit')" class="tab-btn bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition">MS-CIT Puzzle</button>
+            <button onclick="showSection('hsc')" class="tab-btn bg-purple-500 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition">HSC Puzzle</button>
+            <button onclick="showSection('powerbi')" class="tab-btn bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition">PowerBI Enquiry</button>
+        </div>
+
+        <!-- To-Do List Section -->
+        <div id="todo" class="section">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-4">Daily Task List</h2>
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="taskInput" class="flex-1 border rounded-lg px-4 py-2" placeholder="Add new task">
+                    <button onclick="addTask()" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">Add</button>
+                </div>
+                <ul id="taskList" class="space-y-2"></ul>
+            </div>
+        </div>
+
+        <!-- MS-CIT Puzzle Section -->
+        <div id="mscit" class="section hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-4">MS-CIT Memory Puzzle</h2>
+                <div id="mscitPuzzle" class="grid grid-cols-4 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- HSC Puzzle Section -->
+        <div id="hsc" class="section hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-4">HSC Subject Matching</h2>
+                <div id="hscPuzzle" class="grid grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- PowerBI Enquiry Section -->
+        <div id="powerbi" class="section hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-4">PowerBI Excel Enquiry Form</h2>
+                <form id="enquiryForm" class="space-y-4">
+                    <div>
+                        <label class="block mb-2">Name</label>
+                        <input type="text" class="w-full border rounded-lg px-4 py-2">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Email</label>
+                        <input type="email" class="w-full border rounded-lg px-4 py-2">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Query Type</label>
+                        <select class="w-full border rounded-lg px-4 py-2">
+                            <option>Data Analysis</option>
+                            <option>Visualization</option>
+                            <option>Report Creation</option>
+                            <option>Dashboard Design</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2">Message</label>
+                        <textarea class="w-full border rounded-lg px-4 py-2 h-32"></textarea>
+                    </div>
+                    <button type="submit" class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600">Submit Enquiry</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // To-Do List Functionality
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            if (input.value.trim() === '') return;
+
+            const li = document.createElement('li');
+            li.className = 'flex items-center justify-between bg-gray-50 p-3 rounded';
+            li.innerHTML = `
+                <span>${input.value}</span>
+                <div>
+                    <button onclick="toggleTask(this)" class="text-green-500 hover:text-green-600 mr-2">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                    <button onclick="deleteTask(this)" class="text-red-500 hover:text-red-600">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `;
+            document.getElementById('taskList').appendChild(li);
+            input.value = '';
+        }
+
+        function toggleTask(btn) {
+            const task = btn.parentElement.previousElementSibling;
+            task.classList.toggle('line-through');
+        }
+
+        function deleteTask(btn) {
+            btn.closest('li').remove();
+        }
+
+        // MS-CIT Puzzle
+        const mscitTerms = ['HTML', 'CSS', 'Excel', 'Word', 'PowerPoint', 'Access', 'Internet', 'Email'];
+        let flippedCards = [];
+        
+        function initMSCITPuzzle() {
+            const puzzle = document.getElementById('mscitPuzzle');
+            const terms = [...mscitTerms, ...mscitTerms].sort(() => Math.random() - 0.5);
+            puzzle.innerHTML = '';
+
+            terms.forEach((term, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-blue-500 text-white p-4 rounded cursor-pointer text-center h-24 flex items-center justify-center';
+                card.dataset.term = term;
+                card.dataset.index = index;
+                card.onclick = () => flipCard(card);
+                card.innerHTML = '?';
+                puzzle.appendChild(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (flippedCards.length === 2) return;
+            if (flippedCards.includes(card)) return;
+
+            card.innerHTML = card.dataset.term;
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                setTimeout(checkMatch, 1000);
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            if (card1.dataset.term === card2.dataset.term) {
+                card1.style.backgroundColor = '#10B981';
+                card2.style.backgroundColor = '#10B981';
+            } else {
+                card1.innerHTML = '?';
+                card2.innerHTML = '?';
+            }
+            flippedCards = [];
+        }
+
+        // HSC Puzzle
+        const hscSubjects = {
+            'Physics': 'Study of matter and energy',
+            'Chemistry': 'Study of substances and reactions',
+            'Biology': 'Study of living organisms',
+            'Mathematics': 'Study of numbers and patterns'
+        };
+
+        function initHSCPuzzle() {
+            const puzzle = document.getElementById('hscPuzzle');
+            puzzle.innerHTML = '';
+
+            Object.entries(hscSubjects).forEach(([subject, description]) => {
+                const subjectDiv = document.createElement('div');
+                subjectDiv.className = 'bg-purple-500 text-white p-4 rounded cursor-pointer text-center';
+                subjectDiv.innerHTML = subject;
+                subjectDiv.draggable = true;
+                subjectDiv.ondragstart = drag;
+
+                const descriptionDiv = document.createElement('div');
+                descriptionDiv.className = 'border-2 border-dashed border-purple-300 p-4 rounded';
+                descriptionDiv.innerHTML = description;
+                descriptionDiv.ondragover = allowDrop;
+                descriptionDiv.ondrop = drop;
+
+                puzzle.appendChild(subjectDiv);
+                puzzle.appendChild(descriptionDiv);
+            });
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.innerHTML);
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const subject = ev.dataTransfer.getData("text");
+            if (hscSubjects[subject] === ev.target.innerHTML) {
+                ev.target.style.backgroundColor = '#10B981';
+            }
+        }
+
+        // Initialize puzzles
+        initMSCITPuzzle();
+        initHSCPuzzle();
+
+        // Form submission
+        document.getElementById('enquiryForm').onsubmit = (e) => {
+            e.preventDefault();
+            alert('Enquiry submitted successfully!');
+            e.target.reset();
+        };
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
